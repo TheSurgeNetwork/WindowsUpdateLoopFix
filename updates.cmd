@@ -1,26 +1,28 @@
 @echo off
 
 REM NAME: Windows Update Loop Fix
-REM VERSION: 5.0
-REM BUILD DATE: 17 December 2019
+REM VERSION: 5.1
+REM BUILD DATE: 28 April 2020
 REM AUTHOR: aakkam22
+REM EDITOR: firewire10000
 
-REM Function to elevate privileges
-:checkAdmin
-fsutil dirty query %systemdrive% >nul
-	if '%errorlevel%' NEQ '0' (
-		echo Requesting administrative privileges...
-		goto uacPrompt
-	) else ( goto gotAdmin )
+REM Check for permissions
+>nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
 
-:uacPrompt
-echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
-set params = %*:"=""
-echo UAC.ShellExecute "cmd.exe", "/c %~s0 %params%", "", "runas", 1 >> "%temp%\getadmin.vbs"
+REM If error flag set, we do not have admin.
+if '%errorlevel%' NEQ '0' (
+    echo Requesting administrative privileges...
+    goto UACPrompt
+) else ( goto gotAdmin )
 
-"%temp%\getadmin.vbs"
-del "%temp%\getadmin.vbs"
-exit /B
+:UACPrompt
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+    set params = %*:"=""
+    echo UAC.ShellExecute "cmd.exe", "/c %~s0 %params%", "", "runas", 1 >> "%temp%\getadmin.vbs"
+
+    "%temp%\getadmin.vbs"
+    del "%temp%\getadmin.vbs"
+    exit /B
 
 :gotAdmin
 pushd "%CD%"
@@ -40,6 +42,7 @@ REM Function to print header
 cls
 echo.
 echo %screen%
+title title Windows Update Loop Fix - %screen%
 echo.
 goto :eof
 
@@ -122,3 +125,4 @@ echo.
 timeout /t 7
 reg add HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce /v updatesinstall /t REG_EXPAND_SZ /d %systemdrive%\packages\cleanup.cmd >nul 2>&1
 shutdown -r -t 0
+POPD
