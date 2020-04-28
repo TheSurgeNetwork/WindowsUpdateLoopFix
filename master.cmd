@@ -4,7 +4,7 @@ REM NAME: Windows Update Loop Fix
 REM VERSION: 5.1
 REM BUILD DATE: 28 April 2020
 REM AUTHOR: aakkam22
-REM EDITOR firewire10000
+REM EDITOR: firewire10000
 
 REM Check for permissions
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
