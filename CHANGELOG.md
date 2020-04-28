@@ -1,9 +1,9 @@
 # CHANGELOG
 
 > Name: Windows Update Loop Fix  
-> Author: aakkam22
-> Editor: firewire10000
-> Last Updated : 17 December 2019
+> Author: aakkam22  
+> Editor: firewire10000   
+> Last Updated : 28 April 2020
 
 ## 5.X
 
