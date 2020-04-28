@@ -427,21 +427,21 @@ echo Please wait while the Windows Update Agent is installed.
 echo This could take several minutes to complete.
 call %systemdrive%\packages\wua.exe /wuforce /quiet /norestart
 echo.
-	IF %errorlevel%==1609 IF NOT %errorlevel%==0 (
-	goto corrupt
-	)
-	IF %errorlevel%==3010 IF NOT %errorlevel%==0 (
-	goto success
-	)
-	IF %errorlevel%==0 (
-	goto success
-	)
 	IF %errorlevel%==2359302 IF NOT %errorlevel%==0 (
 	goto alreadyInstalled
 	)
 	IF NOT %errorlevel%==0 IF NOT %errorlevel%==2359302 (
 	goto installFail
 	)	
+	IF %errorlevel%==3010 IF NOT %errorlevel%==0 (
+	goto success
+	)	
+	IF %errorlevel%==1609 IF NOT %errorlevel%==0 (
+	goto corrupt
+	)
+	IF %errorlevel%==0 (
+	goto success
+	)
 
 REM error codes
 :corrupt
