@@ -4,15 +4,27 @@ REM NAME: Windows Update Loop Fix
 REM VERSION: 5.1
 REM BUILD DATE: 28 April 2020
 REM AUTHOR: aakkam22
+REM EDITOR firewire10000
 
-REM check for elevated privileges
-:checkAdmin
-fsutil dirty query %systemdrive% >nul
-	if '%errorlevel%' NEQ '0' (
-		echo Administrative privileges not detected. Now exiting...
-		timeout /t 7
-		exit
-	) else ( goto setWindow )
+REM Check for permissions
+>nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
+
+REM If error flag set, we do not have admin.
+if '%errorlevel%' NEQ '0' (
+    echo Requesting administrative privileges...
+    goto UACPrompt
+) else ( goto gotAdmin )
+
+:UACPrompt
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+    set params = %*:"=""
+    echo UAC.ShellExecute "cmd.exe", "/c %~s0 %params%", "", "runas", 1 >> "%temp%\getadmin.vbs"
+
+    "%temp%\getadmin.vbs"
+    del "%temp%\getadmin.vbs"
+    exit /B
+
+:gotAdmin
 
 REM Function to set the window properties
 :setWindow
@@ -46,11 +58,14 @@ REM Function to print header
 cls
 echo.
 echo %screen%
+title Windows Update Loop Fix - %screen%
 echo.
 goto :eof
 
 REM Main menu options
 :mainMenu
+set screen=Main Menu
+call :printHeader
 cls
 mode con cols=80 lines=40
 echo.
@@ -72,17 +87,16 @@ echo.	^|  [3] Help		        		 ^|
 echo.	^|			       			 ^|
 echo.	^|  [4] Go to GitHub Repository  		 ^|
 echo.	^|			       			 ^|
-echo.	^|			       			 ^|
 echo.	^|  [5] Exit		       			 ^|
 echo.	^|			       			 ^|
 echo.	+------------------------------------------------+
-choice /c 1234 /n
-	if %errorlevel% EQU 1 set custom=false && goto termsOfUse
-	if %errorlevel% EQU 2 goto chooseCustom
-	if %errorlevel% EQU 3 start https://github.com/aakkam22/windowsUpdateLoopFix/blob/master/README.md && goto :mainMenu
-	if %errorlevel% EQU 4 start https://github.com/aakkam22/windowsUpdateLoopFix && goto :mainMenu
+choice /c 12345 /n
 	if %errorlevel% EQU 5 exit
-	
+	if %errorlevel% EQU 4 start https://github.com/aakkam22/windowsUpdateLoopFix && goto :mainMenu
+	if %errorlevel% EQU 3 start https://github.com/aakkam22/windowsUpdateLoopFix/blob/master/README.md && goto :mainMenu	
+	if %errorlevel% EQU 2 goto chooseCustom
+	if %errorlevel% EQU 1 set custom=false && goto termsOfUse
+
 :chooseCustom
 set screen=Advanced Options (Advanced Users Only)
 call :printHeader
@@ -97,15 +111,14 @@ echo.	^|  [2] Install the latest Windows Update Agent      ^|
 echo.	^|						    ^|
 echo.	^|  [3] Install KB3020369 and KB3172605              ^|
 echo.	^|						    ^|
-echo.	^|						    ^|
 echo.	^|  [4] Back				  	    ^|
 echo.	^|						    ^|
 echo.	+---------------------------------------------------+
 choice /c 1234 /n
-	if %errorlevel% EQU 1 set custom=false && goto termsOfUse
-	if %errorlevel% EQU 2 set custom=2 && goto termsOfUse
-	if %errorlevel% EQU 3 set custom=3 && goto termsOfUse
 	if %errorlevel% EQU 4 goto mainMenu
+	if %errorlevel% EQU 3 set custom=3 && goto termsOfUse
+	if %errorlevel% EQU 2 set custom=2 && goto termsOfUse	
+	if %errorlevel% EQU 1 set custom=false && goto termsOfUse
 
 :termsOfUse
 set screen=Important Information
@@ -118,8 +131,8 @@ echo An Internet connection is required to download the updates.
 echo.
 echo Press [A] to agree or [E] to exit.
 choice /c AE /n
-	if %errorlevel% EQU 1 goto determineArc
 	if %errorlevel% EQU 2 exit
+	if %errorlevel% EQU 1 goto determineArc
 
 REM determine whether the system is 32 or 64-bit
 :determineArc
@@ -169,8 +182,9 @@ echo.
 
 echo Downloading Update for Windows 7 for x86-based Systems (KB3020369)...
 bitsadmin /transfer kb3020369 https://download.microsoft.com/download/C/0/8/C0823F43-BFE9-4147-9B0A-35769CBBE6B0/Windows6.1-KB3020369-x86.msu "%systemdrive%\packages\3020369.msu" >nul 2>&1
-	if %errorlevel% EQU 0 echo Success!
+	if %errorlevel% EQU 0 chgcolor 20 echo Success!
 	if %errorlevel% NEQ 0 set downErr=true && echo Download failed.
+chgcolor 7
 echo.
 
 echo Downloading Update for Windows 7 for x86-based Systems (KB3172605)...
