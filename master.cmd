@@ -182,9 +182,8 @@ echo.
 
 echo Downloading Update for Windows 7 for x86-based Systems (KB3020369)...
 bitsadmin /transfer kb3020369 https://download.microsoft.com/download/C/0/8/C0823F43-BFE9-4147-9B0A-35769CBBE6B0/Windows6.1-KB3020369-x86.msu "%systemdrive%\packages\3020369.msu" >nul 2>&1
-	if %errorlevel% EQU 0 chgcolor 20 echo Success!
+	if %errorlevel% EQU 0 echo Success!
 	if %errorlevel% NEQ 0 set downErr=true && echo Download failed.
-chgcolor 7
 echo.
 
 echo Downloading Update for Windows 7 for x86-based Systems (KB3172605)...
@@ -198,10 +197,9 @@ bitsadmin /transfer wua http://download.windowsupdate.com/windowsupdate/redist/s
 	if %errorlevel% EQU 0 echo Success!
 	if %errorlevel% NEQ 0 set downErr=true && echo Download failed.
 echo.
-ECHO YOU ARE HERE
-ECHO %CD%
-PAUSE
+
 echo Copying script files...
+PUSHD %~dp0
 xcopy /v /y updates.cmd %systemdrive%\packages >nul 2>&1
 xcopy /v /y cleanup.cmd %systemdrive%\packages >nul 2>&1
 
@@ -246,16 +244,8 @@ bitsadmin /transfer wua http://download.windowsupdate.com/windowsupdate/redist/s
 	if %errorlevel% NEQ 0 set downErr=true && echo Download failed.
 echo.
 
-::TEST POINT
-ECHO YOU ARE HERE
-ECHO %CD%
-PAUSE
-PUSHD %~dp0
-ECHO NEW LOCATION
-ECHO %CD%
-PAUSE
-::END TEST POINT
 echo Copying script files...
+PUSHD %~dp0
 xcopy /v /y updates.cmd %systemdrive%\packages >nul 2>&1
 xcopy /v /y cleanup.cmd %systemdrive%\packages >nul 2>&1
 
