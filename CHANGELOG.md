@@ -1,10 +1,17 @@
 # CHANGELOG
 
 > Name: Windows Update Loop Fix  
-> Author: aakkam22  
+> Author: aakkam22
+> Editor: firewire10000
 > Last Updated : 17 December 2019
 
 ## 5.X
+
+### 5.1
+
+* Fixed bug where the `updates.cmd` and `cleanup.cmd` files were not copying to the destination directory
+* Added the ability to run script as Administrator by double clicking the batch file
+* Added title names to Command Prompt window to show the current section running in the batch file
 
 ### 5.0
 
