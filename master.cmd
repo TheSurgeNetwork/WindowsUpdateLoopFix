@@ -1,8 +1,8 @@
 @echo off
 
 REM NAME: Windows Update Loop Fix
-REM VERSION: 5.0
-REM BUILD DATE: 17 December 2019
+REM VERSION: 5.1
+REM BUILD DATE: 28 April 2020
 REM AUTHOR: aakkam22
 
 REM check for elevated privileges
@@ -167,24 +167,26 @@ call :initializeDownload
 echo Done!
 echo.
 
-echo Downloading Update for Windows 7 (KB3020369)...
+echo Downloading Update for Windows 7 for x86-based Systems (KB3020369)...
 bitsadmin /transfer kb3020369 https://download.microsoft.com/download/C/0/8/C0823F43-BFE9-4147-9B0A-35769CBBE6B0/Windows6.1-KB3020369-x86.msu "%systemdrive%\packages\3020369.msu" >nul 2>&1
 	if %errorlevel% EQU 0 echo Success!
 	if %errorlevel% NEQ 0 set downErr=true && echo Download failed.
 echo.
 
-echo Downloading Update for Windows 7 (KB3172605)...
+echo Downloading Update for Windows 7 for x86-based Systems (KB3172605)...
 bitsadmin /transfer kb3172605 https://download.microsoft.com/download/C/D/5/CD5DE7B2-E857-4BD4-AA9C-6B30C3E1735A/Windows6.1-KB3172605-x86.msu "%systemdrive%\packages\3172605.msu" >nul 2>&1
 	if %errorlevel% EQU 0 echo Success!
 	if %errorlevel% NEQ 0 set downErr=true && echo Download failed.
 echo.
 
-echo Downloading Windows Update Agent v7.6...
-bitsadmin /transfer wua http://download.windowsupdate.com/windowsupdate/redist/standalone/7.6.7600.320/windowsupdateagent-7.6-x86.exe "%systemdrive%\packages\wua.exe" >nul
+echo Downloading Windows Update Agent v7.6 for x86-based Systems...
+bitsadmin /transfer wua http://download.windowsupdate.com/windowsupdate/redist/standalone/7.6.7600.320/windowsupdateagent-7.6-x86.exe "%systemdrive%\packages\wua.exe" >nul 2>&1
 	if %errorlevel% EQU 0 echo Success!
 	if %errorlevel% NEQ 0 set downErr=true && echo Download failed.
 echo.
-
+ECHO YOU ARE HERE
+ECHO %CD%
+PAUSE
 echo Copying script files...
 xcopy /v /y updates.cmd %systemdrive%\packages >nul 2>&1
 xcopy /v /y cleanup.cmd %systemdrive%\packages >nul 2>&1
@@ -224,12 +226,21 @@ bitsadmin /transfer kb3172605 https://download.microsoft.com/download/5/6/0/5605
 	if %errorlevel% NEQ 0 set downErr=true && echo Download failed.
 echo.
 
-echo Downloading Windows Update Agent v7.6...
-bitsadmin /transfer wua http://download.windowsupdate.com/windowsupdate/redist/standalone/7.6.7600.320/windowsupdateagent-7.6-x64.exe "%systemdrive%\packages\wua.exe" >nul
+echo Downloading Windows Update Agent v7.6 for x64-based Systems...
+bitsadmin /transfer wua http://download.windowsupdate.com/windowsupdate/redist/standalone/7.6.7600.320/windowsupdateagent-7.6-x64.exe "%systemdrive%\packages\wua.exe" >nul 2>&1
 	if %errorlevel% EQU 0 echo Success!
 	if %errorlevel% NEQ 0 set downErr=true && echo Download failed.
 echo.
 
+::TEST POINT
+ECHO YOU ARE HERE
+ECHO %CD%
+PAUSE
+PUSHD %~dp0
+ECHO NEW LOCATION
+ECHO %CD%
+PAUSE
+::END TEST POINT
 echo Copying script files...
 xcopy /v /y updates.cmd %systemdrive%\packages >nul 2>&1
 xcopy /v /y cleanup.cmd %systemdrive%\packages >nul 2>&1
